@@ -34,7 +34,7 @@ export default class SceneInit {
       1000
     );
     const axeshelper = new THREE.AxesHelper(5);
-    this.scene.add(axeshelper);
+    // this.scene.add(axeshelper);
     // this.camera.position.x = -10;
     this.camera.position.z = 48;
     // this.camera.position.y = 30;
