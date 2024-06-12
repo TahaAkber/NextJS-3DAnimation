@@ -28,8 +28,8 @@ function App() {
       }
 
       // Position and scale adjustments
-      loadedModel.scene.position.set(1, 3, 0);
-      loadedModel.scene.scale.set(0.5, 0.5, 0.5);
+      loadedModel.scene.position.set(-7, 4, 0);
+      loadedModel.scene.scale.set(3, 3, 5);
       test.scene.add(loadedModel.scene);
     });
 
