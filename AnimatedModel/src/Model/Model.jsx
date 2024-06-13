@@ -10,16 +10,10 @@ gsap.registerPlugin(ScrollTrigger);
 import { gsap } from 'gsap';
 
 function Model(props) {
-  const ref = useRef(null);
-  useFrame(({ clock }) => (ref.current.uTime = clock.getElapsedTime));
-
-  useEffect(() => {
-    console.log('Default position:', ModelRef.current.position);
-  }, []);
   const { nodes } = useGLTF('./assets/shiba/lopoly_dna.gltf');
 
   const ModelRef = useRef();
-
+  console.log(ModelRef);
   useFrame(() => {
     if (ModelRef.current) {
       if (ModelRef.current.rotation.y > -1 || ModelRef.current.rotation.y < 0) {
@@ -32,7 +26,7 @@ function Model(props) {
     <group {...props} dispose={null}>
       <group ref={ModelRef} />
       <group ref={ModelRef} {...props} dispose={null}>
-        <group scale={0.01} ref={ref}>
+        <group scale={0.01}>
           <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={9}>
             <mesh
               geometry={nodes.DNA3.geometry}
@@ -157,7 +151,7 @@ function Model(props) {
 
 function NewApp() {
   const imgref = useRef(null);
-
+  console.log(imgref);
   useEffect(() => {
     const currentImgRef = imgref.current;
     gsap.fromTo(
@@ -178,18 +172,12 @@ function NewApp() {
 
   return (
     <div className="">
-      <Canvas
-        ref={imgref}
-        style={{
-          width: '100vw',
-          height: '110vh',
-          minHeight: '10vh',
-        }}
-      >
+      <Canvas ref={imgref}>
         <Suspense fallback={null}>
           <mesh>
             <Model />
           </mesh>
+          <axesHelper args={[5]} />
         </Suspense>
       </Canvas>
     </div>
