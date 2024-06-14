@@ -10,7 +10,11 @@
 // projectionmatrix : projects our objects onto screen (aspect ratio & the perspective)
 uniform float uTime;
 varying vec3 VPosition;
+varying vec3 vNormal;
+varying vec2 vUv;
 void main() {
+	vNormal = normal;
+	vUv = uv;
 	VPosition = position;
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 }

@@ -2,6 +2,8 @@
 precision mediump float; 
 uniform float uTime;
 varying vec3 VPosition;
+varying vec3 vNormal;
+varying vec2 vUv;
 void main() {
 	//float int double etc data types
 	//Fucntions
@@ -12,5 +14,6 @@ void main() {
 	// + - * / and use mod with name 
 	//sin cosine tan
 	// dot product and cross product
-	gl_FragColor = vec4(vec3(0,0,0),1);
+
+	gl_FragColor = vec4(vUv.xx,1,1.0);
 }

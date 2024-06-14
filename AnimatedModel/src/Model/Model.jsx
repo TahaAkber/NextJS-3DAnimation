@@ -41,11 +41,10 @@ function Model(props) {
   });
   //to use uniform in vertex and fragment shader we have to use precision mediump float;
 
-  const shadernew = new ShaderMaterial({
+  const shadernew = new THREE.ShaderMaterial({
     uniforms: { uTime: { value: 1 } },
     vertexShader: vertex,
     fragmentShader: fragment,
-    wireframe: true,
   });
 
   console.log(nodes.DNA3.geometry.attributes);
@@ -254,8 +253,8 @@ function Appp() {
             />
 
             <Suspense fallback={null}>
-              <directionalLight position={[1, 1, 1]} intensity={0.2} />
-              <spotLight position={[1, 1, 1]} angle={35} penumbra={10} />
+              <directionalLight position={[1, 1, 1]} intensity={0.5} />
+              <spotLight position={[0.5, 0.5, 1]} angle={10} penumbra={10} />
 
               <mesh>
                 <Model />
