@@ -2,10 +2,16 @@
 //attributes are vertex specific data we cant import it in fragment glsl
 //MAT4 is basically a matrix with 4x4 we can also use mat2 etc
 
-attributes vec3 position; //attributes has an array which defines position,shapes,edges and their values
-uniform MAT4 projectionMatrix;
-uniform MAT4 modelViewMatrix;
+// uniform MAT4 projectionMatrix;
+// uniform MAT4 modelViewMatrix;
 //Modelview matrix is a combination of two matrix which is model matrix and view matrix
+//model matrix : position,scale , rotation of our model
+//view matrix : position,orientation, of our camera
+// projectionmatrix : projects our objects onto screen (aspect ratio & the perspective)
+uniform float uTime;
+varying vec3 VPosition;
 void main() {
+	VPosition = position;
 	gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 }
+

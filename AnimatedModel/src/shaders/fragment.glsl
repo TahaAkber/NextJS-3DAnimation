@@ -1,3 +1,7 @@
+// attributes vec3 position; //attributes has an array which defines position,shapes,edges and their values
+precision mediump float; 
+uniform float uTime;
+varying vec3 VPosition;
 void main() {
 	//float int double etc data types
 	//Fucntions
@@ -8,5 +12,5 @@ void main() {
 	// + - * / and use mod with name 
 	//sin cosine tan
 	// dot product and cross product
-	gl_FragColor = vec4(1,0,1,1);
+	gl_FragColor = vec4(vec3(0,0,0),1);
 }

@@ -42,12 +42,14 @@ function Model(props) {
   //to use uniform in vertex and fragment shader we have to use precision mediump float;
 
   const shadernew = new ShaderMaterial({
+    uniforms: { uTime: { value: 1 } },
     vertexShader: vertex,
     fragmentShader: fragment,
+    wireframe: true,
   });
-  console.log(nodes.DNA3.geometry);
-  console.log(nodes);
 
+  console.log(nodes.DNA3.geometry.attributes);
+  console.log(nodes);
   // const customShader = new ShaderMaterial({
   //   uniforms: {
   //     uTime: { value: 1 }, // Initial value can be set here
@@ -212,25 +214,25 @@ function Model(props) {
 function Appp() {
   const imgref = useRef(null);
 
-  useEffect(() => {
-    const currentImgRef = imgref.current;
-    gsap.fromTo(
-      currentImgRef,
-      { rotation: 0 },
-      {
-        rotation: 90,
-        scrollTrigger: {
-          trigger: currentImgRef,
-          start: 'top center ',
-          end: 'bottom  center',
-          duration: 3,
-          markers: false,
-          scrub: true,
-          toggleActions: 'play , none , none , reverse',
-        },
-      }
-    );
-  }, []);
+  // useEffect(() => {
+  //   const currentImgRef = imgref.current;
+  //   gsap.fromTo(
+  //     currentImgRef,
+  //     { rotation: 0 },
+  //     {
+  //       rotation: 90,
+  //       scrollTrigger: {
+  //         trigger: currentImgRef,
+  //         start: 'top center ',
+  //         end: 'bottom  center',
+  //         duration: 3,
+  //         markers: false,
+  //         scrub: true,
+  //         toggleActions: 'play , none , none , reverse',
+  //       },
+  //     }
+  //   );
+  // }, []);
 
   return (
     <div className="">
