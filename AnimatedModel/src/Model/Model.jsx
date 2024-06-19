@@ -1,5 +1,6 @@
 'use client';
-
+import vertex from '../shaders/vertex.glsl';
+import fragment from '../shaders/fragment.glsl';
 import * as THREE from 'three';
 import { Suspense, useRef, useState, useEffect } from 'react';
 import { Canvas, extend, useFrame, useThree } from '@react-three/fiber';
@@ -30,48 +31,54 @@ function Model(props) {
 
   useFrame(() => {
     if (groupRef.current) {
-      if (
-        groupRef.current.rotation.y > -1 ||
-        groupRef.current.rotation.y < -0.004
-      ) {
-        groupRef.current.rotation.x += 0.03;
+      if (groupRef.current.rotation.y > -1) {
+        groupRef.current.rotation.x += 0.02;
       }
 
       const fixedPosition = new THREE.Vector3(0, 0, 0);
-      groupRef.current.position.copy(fixedPosition); // Model ki position ko fixed position par set kiya gaya hai
+      groupRef.current.position.copy(fixedPosition);
     }
   });
+  //to use uniform in vertex and fragment shader we have to use precision mediump float;
 
-  const customShader = new ShaderMaterial({
-    uniforms: {
-      uTime: { value: 1 }, // Initial value can be set here
-      color2: { value: new THREE.Color('#FFFFFF') },
-      color1: { value: new THREE.Color('#FFA500') },
-    },
-    vertexShader: `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      precision mediump float;
-      uniform vec3 color1;
-      uniform vec3 color2;
-      uniform float uTime;
-      varying vec2 vUv;
-      void main() {
-        gl_FragColor = vec4(sin(vUv.y + uTime) * mix(color1, color2, vUv.y), 1.5);
-      }
-    `,
+  const shadernew = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 1 } },
+    vertexShader: vertex,
+    fragmentShader: fragment,
   });
+
+  console.log(nodes.DNA3.geometry.attributes);
+  console.log(nodes);
+  // const customShader = new ShaderMaterial({
+  //   uniforms: {
+  //     uTime: { value: 1 }, // Initial value can be set here
+  //     color2: { value: new THREE.Color('#FFFFFF') },
+  //     color1: { value: new THREE.Color('#FFA500') },
+  //   },
+  //   vertexShader: `
+  //     varying vec2 vUv;
+  //     void main() {
+  //       vUv = uv;
+  //       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  //     }
+  //   `,
+  //   fragmentShader: `
+  //     precision mediump float;
+  //     uniform vec3 color1;
+  //     uniform vec3 color2;
+  //     uniform float uTime;
+  //     varying vec2 vUv;
+  //     void main() {
+  //       gl_FragColor = vec4(sin(vUv.y + uTime) * mix(color1, color2, vUv.y), 1.5);
+  //     }
+  //   `,
+  // });
   // Update material on mount
   useEffect(() => {
     if (nodes && nodes.DNA3 && nodes.DNA3.material) {
-      nodes.DNA3.material = customShader; // Use custom shader material
+      nodes.DNA3.material = shadernew; // Use custom shader material
     }
-  }, [nodes, customShader]);
+  }, [nodes, shadernew]);
 
   return (
     <group {...props} dispose={null}>
@@ -79,7 +86,7 @@ function Model(props) {
       <group ref={groupRef} {...props} dispose={null}>
         <group scale={0.01} ref={ref}>
           <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={15}>
-            <mesh geometry={nodes.DNA3.geometry} material={customShader}>
+            <mesh geometry={nodes.DNA3.geometry} material={shadernew}>
               <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={0}>
                 <mesh
                   geometry={nodes.Sphere_CTRL.geometry}
@@ -206,25 +213,25 @@ function Model(props) {
 function Appp() {
   const imgref = useRef(null);
 
-  useEffect(() => {
-    const currentImgRef = imgref.current;
-    gsap.fromTo(
-      currentImgRef,
-      { rotation: 0 },
-      {
-        rotation: 90,
-        scrollTrigger: {
-          trigger: currentImgRef,
-          start: 'top center ',
-          end: 'bottom  center',
-          duration: 3,
-          markers: false,
-          scrub: true,
-          toggleActions: 'play , none , none , reverse',
-        },
-      }
-    );
-  }, []);
+  // useEffect(() => {
+  //   const currentImgRef = imgref.current;
+  //   gsap.fromTo(
+  //     currentImgRef,
+  //     { rotation: 0 },
+  //     {
+  //       rotation: 90,
+  //       scrollTrigger: {
+  //         trigger: currentImgRef,
+  //         start: 'top center ',
+  //         end: 'bottom  center',
+  //         duration: 3,
+  //         markers: false,
+  //         scrub: true,
+  //         toggleActions: 'play , none , none , reverse',
+  //       },
+  //     }
+  //   );
+  // }, []);
 
   return (
     <div className="">
@@ -246,8 +253,8 @@ function Appp() {
             />
 
             <Suspense fallback={null}>
-              <directionalLight position={[1, 1, 1]} intensity={0.2} />
-              <spotLight position={[1, 1, 1]} angle={35} penumbra={10} />
+              <directionalLight position={[1, 1, 1]} intensity={0.5} />
+              <spotLight position={[0.5, 0.5, 1]} angle={10} penumbra={10} />
 
               <mesh>
                 <Model />
