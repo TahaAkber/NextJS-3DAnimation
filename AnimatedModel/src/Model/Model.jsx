@@ -1,9 +1,8 @@
-'use client';
 import vertex from '../shaders/vertex.glsl';
 import fragment from '../shaders/fragment.glsl';
 import * as THREE from 'three';
-import { Suspense, useRef, useState, useEffect } from 'react';
-import { Canvas, extend, useFrame, useThree } from '@react-three/fiber';
+import { Suspense, useRef, useEffect } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
 import {
   OrbitControls,
   useGLTF,
@@ -11,82 +10,53 @@ import {
   OrthographicCamera,
 } from '@react-three/drei';
 import { Grid } from '@mui/material';
-
 import ScrollTrigger from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
-import { ShaderMaterial } from 'three';
 import { gsap } from 'gsap';
 
-function Model(props) {
-  const ref = useRef(null);
-  useFrame(({ clock }) => (ref.current.uTime = clock.getElapsedTime));
+gsap.registerPlugin(ScrollTrigger);
 
-  useEffect(() => {
-    console.log('Default position:', groupRef.current.position);
-  }, []);
+function Model(props) {
+  const shaderMaterialRef = useRef(); // Reference to the shader material
   const { nodes } = useGLTF('./assets/shiba/lopoly_dna.gltf');
 
-  const groupRef = useRef(); // Create a reference for the group
+  const groupRef = useRef();
+
+  useFrame(({ clock }) => {
+    if (shaderMaterialRef.current) {
+      shaderMaterialRef.current.uniforms.uTime.value = clock.getElapsedTime();
+    }
+  });
 
   useFrame(() => {
     if (groupRef.current) {
       if (groupRef.current.rotation.y > -1) {
         groupRef.current.rotation.x += 0.02;
       }
-
       const fixedPosition = new THREE.Vector3(0, 0, 0);
       groupRef.current.position.copy(fixedPosition);
     }
   });
-  //to use uniform in vertex and fragment shader we have to use precision mediump float;
 
-  const shadernew = new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 1 } },
+  const shaderMaterial = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0.0 } },
     vertexShader: vertex,
     fragmentShader: fragment,
   });
 
-  console.log(nodes.DNA3.geometry.attributes);
-  console.log(nodes);
-  // const customShader = new ShaderMaterial({
-  //   uniforms: {
-  //     uTime: { value: 1 }, // Initial value can be set here
-  //     color2: { value: new THREE.Color('#FFFFFF') },
-  //     color1: { value: new THREE.Color('#FFA500') },
-  //   },
-  //   vertexShader: `
-  //     varying vec2 vUv;
-  //     void main() {
-  //       vUv = uv;
-  //       gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-  //     }
-  //   `,
-  //   fragmentShader: `
-  //     precision mediump float;
-  //     uniform vec3 color1;
-  //     uniform vec3 color2;
-  //     uniform float uTime;
-  //     varying vec2 vUv;
-  //     void main() {
-  //       gl_FragColor = vec4(sin(vUv.y + uTime) * mix(color1, color2, vUv.y), 1.5);
-  //     }
-  //   `,
-  // });
-  // Update material on mount
   useEffect(() => {
     if (nodes && nodes.DNA3 && nodes.DNA3.material) {
-      nodes.DNA3.material = shadernew; // Use custom shader material
+      nodes.DNA3.material = shaderMaterial; // Use custom shader material
+      shaderMaterialRef.current = shaderMaterial; // Assign the ref
     }
-  }, [nodes, shadernew]);
+  }, [nodes, shaderMaterial]);
 
   return (
     <group {...props} dispose={null}>
       <group ref={groupRef} />
       <group ref={groupRef} {...props} dispose={null}>
-        <group scale={0.01} ref={ref}>
+        <group scale={0.01}>
           <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={15}>
-            <mesh geometry={nodes.DNA3.geometry} material={shadernew}>
+            <mesh geometry={nodes.DNA3.geometry} material={shaderMaterial}>
               <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={0}>
                 <mesh
                   geometry={nodes.Sphere_CTRL.geometry}
@@ -196,7 +166,6 @@ function Model(props) {
             position={[0, 20, 513.86]}
             rotation={[-0.03, 0.023, 0.001]}
           />
-
           <OrthographicCamera
             makeDefault={false}
             far={100000}
@@ -212,38 +181,32 @@ function Model(props) {
 
 function Appp() {
   const imgref = useRef(null);
-
-  // useEffect(() => {
-  //   const currentImgRef = imgref.current;
-  //   gsap.fromTo(
-  //     currentImgRef,
-  //     { rotation: 0 },
-  //     {
-  //       rotation: 90,
-  //       scrollTrigger: {
-  //         trigger: currentImgRef,
-  //         start: 'top center ',
-  //         end: 'bottom  center',
-  //         duration: 3,
-  //         markers: false,
-  //         scrub: true,
-  //         toggleActions: 'play , none , none , reverse',
-  //       },
-  //     }
-  //   );
-  // }, []);
-
+  useEffect(() => {
+    const currentImgRef = imgref.current;
+    gsap.fromTo(
+      currentImgRef,
+      { rotation: 0 },
+      {
+        rotation: 90,
+        scrollTrigger: {
+          trigger: currentImgRef,
+          start: 'top center ',
+          end: 'bottom center',
+          duration: 3,
+          markers: false,
+          scrub: true,
+          toggleActions: 'play , none , none , reverse',
+        },
+      }
+    );
+  }, []);
   return (
     <div className="">
       <Grid container justifyContent="start">
         <Grid item xs={12} md={4}>
           <Canvas
             ref={imgref}
-            style={{
-              width: '100vw',
-              height: '110vh',
-              minHeight: '10vh',
-            }}
+            style={{ width: '100vw', height: '110vh', minHeight: '10vh' }}
           >
             <OrbitControls
               autoRotateSpeed={4}
@@ -251,11 +214,9 @@ function Appp() {
               enablePan={true}
               target={[0, 0, 0]}
             />
-
             <Suspense fallback={null}>
-              <directionalLight position={[1, 1, 1]} intensity={0.5} />
+              <directionalLight position={[1, 1, 1]} intensity={1} />
               <spotLight position={[0.5, 0.5, 1]} angle={10} penumbra={10} />
-
               <mesh>
                 <Model />
               </mesh>
