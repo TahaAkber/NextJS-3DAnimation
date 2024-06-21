@@ -3,11 +3,11 @@ import fragment from '../shaders/fragment.glsl';
 import * as THREE from 'three';
 import { Suspense, useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
-import { Grid } from '@mui/material';
+import { Wireframe, useGLTF } from '@react-three/drei';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { gsap } from 'gsap';
 import coloredtexture from '../shaders/peakpx.jpg';
+
 gsap.registerPlugin(ScrollTrigger);
 
 function Model(props) {
@@ -20,7 +20,7 @@ function Model(props) {
     if (shaderMaterialRef.current) {
       shaderMaterialRef.current.uniforms.uTime.value = clock.getElapsedTime();
       const timeValue = clock.getElapsedTime();
-      const colorvalue = Math.sin(timeValue) / 2.0 + 0.5;
+      const colorvalue = Math.sin(timeValue) / 2.0 + 0.7;
       const colorvalue2 = Math.sin(timeValue) / 3.0 + 0.3;
       shaderMaterialRef.current.uniforms.ourColor.value.set(
         0.0,
@@ -76,7 +76,7 @@ function Model(props) {
   );
 }
 
-function Appp() {
+function NewApp() {
   const imgref = useRef(null);
 
   useEffect(() => {
@@ -101,30 +101,32 @@ function Appp() {
 
   return (
     <div>
-      <Grid container justifyContent="start">
-        <Grid item xs={12} md={4}>
-          <Canvas
-            ref={imgref}
-            style={{ width: '100vw', height: '110vh', minHeight: '10vh' }}
-          >
-            <OrbitControls
-              autoRotateSpeed={4}
-              enableZoom={false}
-              enablePan={true}
-              target={[0, 0, 0]}
-            />
-            <Suspense fallback={null}>
-              <directionalLight position={[1, 1, 1]} intensity={1} />
-              <spotLight position={[0.5, 0.5, 1]} angle={10} penumbra={10} />
-              <mesh>
-                <Model />
-              </mesh>
-            </Suspense>
-          </Canvas>
-        </Grid>
-      </Grid>
+      <Canvas
+        ref={imgref}
+        style={{ width: '100vw', height: '110vh', minHeight: '10vh' }}
+      >
+        <Suspense fallback={null}>
+          <directionalLight position={[1, 1, 1]} intensity={1} />
+          <spotLight position={[0.5, 0.5, 1]} angle={10} penumbra={10} />
+          <mesh>
+            <Model />
+          </mesh>
+        </Suspense>
+      </Canvas>
     </div>
   );
 }
 
-export default Appp;
+export default NewApp;
+
+{
+  /* Mouse Control */
+}
+{
+  /* <OrbitControls
+            autoRotateSpeed={4}
+            enableZoom={false}
+            enablePan={true}
+            target={[0, 0, 0]}
+          /> */
+}
