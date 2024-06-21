@@ -3,16 +3,11 @@ import fragment from '../shaders/fragment.glsl';
 import * as THREE from 'three';
 import { Suspense, useRef, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import {
-  OrbitControls,
-  useGLTF,
-  PerspectiveCamera,
-  OrthographicCamera,
-} from '@react-three/drei';
+import { OrbitControls, useGLTF } from '@react-three/drei';
 import { Grid } from '@mui/material';
 import ScrollTrigger from 'gsap/ScrollTrigger';
 import { gsap } from 'gsap';
-
+import coloredtexture from '../shaders/peakpx.jpg';
 gsap.registerPlugin(ScrollTrigger);
 
 function Model(props) {
@@ -24,6 +19,15 @@ function Model(props) {
   useFrame(({ clock }) => {
     if (shaderMaterialRef.current) {
       shaderMaterialRef.current.uniforms.uTime.value = clock.getElapsedTime();
+      const timeValue = clock.getElapsedTime();
+      const colorvalue = Math.sin(timeValue) / 2.0 + 0.3;
+      const colorvalue2 = Math.sin(timeValue) / 3.0 + 0.3;
+      shaderMaterialRef.current.uniforms.ourColor.value.set(
+        0.0,
+        colorvalue,
+        colorvalue2,
+        1.0
+      );
     }
   });
 
@@ -38,7 +42,12 @@ function Model(props) {
   });
 
   const shaderMaterial = new THREE.ShaderMaterial({
-    uniforms: { uTime: { value: 0.0 } },
+    uniforms: {
+      uTime: { value: 0.0 },
+      ourColor: { value: new THREE.Vector4(1.0, 1.0, 1.0, 1.0) },
+      color4: { value: new THREE.Color(0xffffff) },
+      uTexture: { value: new THREE.TextureLoader().load(coloredtexture) },
+    },
     vertexShader: vertex,
     fragmentShader: fragment,
   });
@@ -56,123 +65,11 @@ function Model(props) {
       <group ref={groupRef} {...props} dispose={null}>
         <group scale={0.01}>
           <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={15}>
-            <mesh geometry={nodes.DNA3.geometry} material={shaderMaterial}>
-              <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL.geometry}
-                  material={nodes.Sphere_CTRL.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_1.geometry}
-                  material={nodes.Sphere_CTRL_1.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_2.geometry}
-                  material={nodes.Sphere_CTRL_2.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[0, 0, 0.436]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_3.geometry}
-                  material={nodes.Sphere_CTRL_3.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[0, 0, 0]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_4.geometry}
-                  material={nodes.Sphere_CTRL_4.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[0, 0, 0.436]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_5.geometry}
-                  material={nodes.Sphere_CTRL_5.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[1, 1, 0]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_6.geometry}
-                  material={nodes.Sphere_CTRL_6.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[1, 1, 0]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_7.geometry}
-                  material={nodes.Sphere_CTRL_7.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[1, 1, 0.436]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_8.geometry}
-                  material={nodes.Sphere_CTRL_8.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[1, 1, 10]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_9.geometry}
-                  material={nodes.Sphere_CTRL_9.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 0]} rotation={[1, 1, 10]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_10.geometry}
-                  material={nodes.Sphere_CTRL_10.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 0, 2.401]} rotation={[1, 1, 0]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_11.geometry}
-                  material={nodes.Sphere_CTRL_11.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 2.552, 0]} rotation={[1, 1, 0]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_12.geometry}
-                  material={nodes.Sphere_CTRL_12.material}
-                  scale={0.7}
-                />
-              </group>
-              <group position={[0, 1.939, 0]} rotation={[0, 0, 1]} scale={0}>
-                <mesh
-                  geometry={nodes.Sphere_CTRL_13.geometry}
-                  material={nodes.Sphere_CTRL_13.material}
-                  scale={0.7}
-                />
-              </group>
-            </mesh>
-            <mesh geometry={nodes.Cube.geometry} material={nodes} />
+            <mesh
+              geometry={nodes.DNA3.geometry}
+              material={shaderMaterial}
+            ></mesh>
           </group>
-          <PerspectiveCamera
-            makeDefault={false}
-            far={100000}
-            near={70}
-            fov={5}
-            position={[0, 20, 513.86]}
-            rotation={[-0.03, 0.023, 0.001]}
-          />
-          <OrthographicCamera
-            makeDefault={false}
-            far={100000}
-            near={0}
-            position={[-965.593, -1742.45, 188.687]}
-            rotation={[1.569, -0.629, 1.568]}
-          />
         </group>
       </group>
     </group>
@@ -181,6 +78,7 @@ function Model(props) {
 
 function Appp() {
   const imgref = useRef(null);
+
   useEffect(() => {
     const currentImgRef = imgref.current;
     gsap.fromTo(
@@ -190,18 +88,19 @@ function Appp() {
         rotation: 90,
         scrollTrigger: {
           trigger: currentImgRef,
-          start: 'top center ',
+          start: 'top center',
           end: 'bottom center',
           duration: 3,
           markers: false,
           scrub: true,
-          toggleActions: 'play , none , none , reverse',
+          toggleActions: 'play none none reverse',
         },
       }
     );
   }, []);
+
   return (
-    <div className="">
+    <div>
       <Grid container justifyContent="start">
         <Grid item xs={12} md={4}>
           <Canvas
