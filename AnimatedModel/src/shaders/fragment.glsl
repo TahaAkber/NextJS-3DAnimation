@@ -17,6 +17,8 @@
 
 // 	gl_FragColor = vec4(vUv.xx,1,1.0);
 // }
+
+
 // precision mediump float;
 // uniform float uTime;
 // varying vec2 vUv;
@@ -37,8 +39,9 @@
 //     gl_FragColor = vec4(color, 1.0);
 // }
 
-// precision mediump float;
 
+
+// precision mediump float;
 // uniform float uTime;
 // varying vec2 vUv;
 // uniform vec3 color4;
@@ -53,8 +56,9 @@
 //     // Set the fragment color
 //     gl_FragColor = vec4(newcolor, 1.0);
 // }
-// precision mediump float;
 
+
+// precision mediump float;
 // uniform float uTime;
 // uniform vec4 ourColor; // Dynamic color based on time
 // varying vec2 vUv;
@@ -78,8 +82,24 @@
 //     gl_FragColor = vec4(color.xyz, 1.0);
 // }
 
-precision mediump float;
 
+
+// precision mediump float;
+// uniform float uTime;
+// uniform vec4 ourColor; // Dynamic color based on time
+// varying vec2 vUv;
+// uniform vec3 color4; // Base color
+// uniform sampler2D uTexture;
+
+// void main() {
+//     //added only custom texture
+//     vec4 color = texture2D(uTexture,vUv);
+//     gl_FragColor = vec4(color.xyz, 1.0);
+// }
+
+
+
+precision mediump float;
 uniform float uTime;
 uniform vec4 ourColor; // Dynamic color based on time
 varying vec2 vUv;
@@ -87,7 +107,24 @@ uniform vec3 color4; // Base color
 uniform sampler2D uTexture;
 
 void main() {
-    
-    vec4 color = texture2D(uTexture,vUv);
-    gl_FragColor = vec4(color.xyz, 1.0);
+    // Sample the texture color
+    vec4 texColor = texture2D(uTexture, vUv);
+
+    // Create a new color by combining the input color with the UV coordinates
+    vec3 newColor = color4 * vec3(vUv, 1.0);
+
+    // Darken the new color
+    newColor *= 1.5;
+
+    // Mix the new color with the dynamic color (ourColor.rgb)
+    vec3 dynamicColor = mix(newColor, ourColor.rgb, 0.5);
+
+    // Ensure dynamicColor is not completely black
+    dynamicColor = max(dynamicColor, 0.3); // Minimum value to avoid pure black
+
+    // Combine dynamic color with texture color
+    vec3 finalColor = dynamicColor * texColor.xyz;
+
+    // Output final color with full alpha (1.0)
+    gl_FragColor = vec4(finalColor, 1.0);
 }

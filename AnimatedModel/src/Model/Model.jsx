@@ -20,7 +20,7 @@ function Model(props) {
     if (shaderMaterialRef.current) {
       shaderMaterialRef.current.uniforms.uTime.value = clock.getElapsedTime();
       const timeValue = clock.getElapsedTime();
-      const colorvalue = Math.sin(timeValue) / 2.0 + 0.3;
+      const colorvalue = Math.sin(timeValue) / 2.0 + 0.5;
       const colorvalue2 = Math.sin(timeValue) / 3.0 + 0.3;
       shaderMaterialRef.current.uniforms.ourColor.value.set(
         0.0,
