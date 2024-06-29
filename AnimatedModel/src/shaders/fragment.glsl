@@ -99,32 +99,53 @@
 
 
 
+// precision mediump float;
+// uniform float uTime;
+// uniform vec4 ourColor; // Dynamic color based on time
+// varying vec2 vUv;
+// uniform vec3 color4; // Base color
+// uniform sampler2D uTexture;
+
+// void main() {
+//     // Sample the texture color
+//     vec4 texColor = texture2D(uTexture, vUv);
+
+//     // Create a new color by combining the input color with the UV coordinates
+//     vec3 newColor = color4 * vec3(vUv, 1.0);
+
+//     // Darken the new color
+//     newColor *= 1.5;
+
+//     // Mix the new color with the dynamic color (ourColor.rgb)
+//     vec3 dynamicColor = mix(newColor, ourColor.rgb, 0.5);
+
+//     // Ensure dynamicColor is not completely black
+//     dynamicColor = max(dynamicColor, 0.3); // Minimum value to avoid pure black
+
+//     // Combine dynamic color with texture color
+//     vec3 finalColor = dynamicColor * texColor.xyz;
+
+//     // Output final color with full alpha (1.0)
+//     gl_FragColor = vec4(finalColor, 1.0);
+// }
+
+
 precision mediump float;
 uniform float uTime;
-uniform vec4 ourColor; // Dynamic color based on time
 varying vec2 vUv;
-uniform vec3 color4; // Base color
-uniform sampler2D uTexture;
-
+uniform sampler2D globalTexture;
+uniform vec3 color4;
 void main() {
-    // Sample the texture color
-    vec4 texColor = texture2D(uTexture, vUv);
+    // Create a time-based factor that oscillates between 0 and 1
+    // float factor = (sin(uTime) + 1.0) / 2.0;
 
-    // Create a new color by combining the input color with the UV coordinates
-    vec3 newColor = color4 * vec3(vUv, 1.0);
+    // Define the red and white colors
+    vec3 color1 = vec3(1.0, vUv.x, 0.0);  
+    vec3 color2 = vec3(1.0, vUv.x, 0.0);  
 
-    // Darken the new color
-    newColor *= 1.5;
+    // Interpolate between red and white based on the factor
+    vec3 color = mix(color1, color2, 1.0);
 
-    // Mix the new color with the dynamic color (ourColor.rgb)
-    vec3 dynamicColor = mix(newColor, ourColor.rgb, 0.5);
-
-    // Ensure dynamicColor is not completely black
-    dynamicColor = max(dynamicColor, 0.3); // Minimum value to avoid pure black
-
-    // Combine dynamic color with texture color
-    vec3 finalColor = dynamicColor * texColor.xyz;
-
-    // Output final color with full alpha (1.0)
-    gl_FragColor = vec4(finalColor, 1.0);
+    // Output the final color
+    gl_FragColor = vec4(color, 1.0);
 }
